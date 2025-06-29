@@ -125,10 +125,10 @@
     appendBubble("🧠 Thinking...", 'agent');
 
     try {
-      const res = await fetch("https://268343bd-f705-4b20-8f05-2875a24e5a0d-00-1cwlcoyth9afu.sisko.replit.dev/ask", {
+      const res = await fetch("https://aymnsk-mcp2-backend.hf.space/run/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: message, agents })
+        body: JSON.stringify({ data: [message, agents] })
       });
 
       const result = await res.json();
