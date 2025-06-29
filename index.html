@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PerspectiveAI Chat</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1e1e2f;
+      color: white;
+      padding: 2rem;
+    }
+    textarea, select, button {
+      width: 100%;
+      margin: 1rem 0;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+    textarea {
+      height: 100px;
+      background-color: #111827;
+      color: white;
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    pre {
+      white-space: pre-wrap;
+      background: #0f172a;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🤖 Ask PerspectiveAI</h1>
+
+  <textarea id="question" placeholder="What's your question?"></textarea>
+
+  <label>Select Agents:</label>
+  <select id="agents" multiple size="8">
+    <option value="Philosopher">Philosopher</option>
+    <option value="Historian">Historian</option>
+    <option value="Hacker">Hacker</option>
+    <option value="Comedian">Comedian</option>
+    <option value="Lawyer">Lawyer</option>
+    <option value="Scientist">Scientist</option>
+    <option value="Journalist">Journalist</option>
+    <option value="Trader">Trader</option>
+  </select>
+
+  <button onclick="askAI()">Ask</button>
+
+  <h2>🧠 Responses:</h2>
+  <pre id="output">Waiting for your question...</pre>
+
+  <script>
+    async function askAI() {
+      const question = document.getElementById('question').value;
+      const agents = Array.from(document.getElementById('agents').selectedOptions).map(opt => opt.value);
+      const output = document.getElementById('output');
+
+      output.innerText = '🌀 Thinking...';
+
+      try {
+        const response = await fetch("https://aymnsk-mcp2-backend.hf.space/run/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            data: [question, agents]
+          })
+        });
+
+        const result = await response.json();
+        const replies = result.data[0];  // dictionary of agent responses
+
+        let formatted = "";
+        for (let [agent, reply] of Object.entries(replies)) {
+          formatted += `🧠 ${agent}:\n${reply}\n\n`;
+        }
+
+        output.innerText = formatted;
+      } catch (err) {
+        output.innerText = "❌ Error contacting backend: " + err;
+      }
+    }
+  </script>
+</body>
+</html>
